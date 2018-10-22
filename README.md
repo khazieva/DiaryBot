@@ -7,7 +7,7 @@
 Доступные команды: в разработке.
 
  
-Запросы к API Telegram осуществляются с помощью библиотеки telegram.ext.
+Запросы к API Telegram осуществляются с помощью библиотеки python-telegram-bot.
 
 
 Запуск бота: `python bot.py --token [your_token]`
