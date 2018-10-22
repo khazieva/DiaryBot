@@ -5,7 +5,9 @@ from datetime import datetime, timedelta, date, time
 class Time():
     def __init__(self, input_string):
         self.input_string = input_string
+        # Регулярное выражение для строк вида '2018/10/1 22:20'.
         self.reg_date = re.compile(r'\d{4}/\d{1,2}/\d{1,2} \d{2}:\d{2}')
+        # Регулярное выражение для строк вида 'завтра в 15:00'.
         self.reg_word = re.compile(r'[а-я ]* в \d{2}:\d{2}')
         self.days_and_shift = {
             'сегодня': timedelta(days=0),
@@ -14,6 +16,8 @@ class Time():
             'через неделю': timedelta(days=7)
         }
 
+    # Функция для превращения строки с датой и временем
+    # в объект datetime.
     def parse_raw_date(self):
         try:
             result = datetime.strptime(self.input_string, "%Y/%m/%d %H:%M")
@@ -21,6 +25,9 @@ class Time():
             return None
         return result
 
+    # Функция для превращения строки
+    # со словесным обозначением даты и временем
+    # в объект datetime.
     def input_word_and_time(self, word, time):
         time_to_add = datetime.strptime(time, "%H:%M").time()
         if word not in self.days_and_shift:
@@ -28,6 +35,8 @@ class Time():
         date_to_add = date.today() + self.days_and_shift[word]
         return datetime.combine(date_to_add, time_to_add)
 
+    # Функция для превращения строки
+    # со словесным обозначением даты в объект date.
     def input_word(self, word):
         today_date = datetime.today().date()
         if word not in self.days_and_shift:
@@ -35,6 +44,8 @@ class Time():
         result = today_date + self.days_and_shift[word]
         return result
 
+    # Функция, осуществляющая парсинг строк
+    # со словесным обозначением даты.
     def parse_string(self):
         if ':' in self.input_string:
             input_list = self.input_string.split(' в ')
@@ -46,6 +57,8 @@ class Time():
             result = self.input_word(word)
         return result
 
+    # Функция, осуществляющая парсинг строки
+    # вне зависимости от формата.
     def parse(self):
         if self.reg_date.match(self.input_string):
             result = self.parse_raw_date()
