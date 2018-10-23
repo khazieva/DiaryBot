@@ -3,12 +3,11 @@ from datetime import datetime, timedelta, date, time
 
 
 class Time():
-    def __init__(self, input_string):
-        self.input_string = input_string
+    def __init__(self):
         # Регулярное выражение для строк вида '2018/10/1 22:20'.
-        self.reg_date = re.compile(r'\d{4}/\d{1,2}/\d{1,2} \d{2}:\d{2}')
+        self.reg_date = re.compile(r'(\d{4}/\d{1,2}/\d{1,2} \d{2}:\d{2})(.*)')
         # Регулярное выражение для строк вида 'завтра в 15:00'.
-        self.reg_word = re.compile(r'[а-я ]* в \d{2}:\d{2}')
+        self.reg_word = re.compile(r'([а-я ]* в \d{2}:\d{2})(.*)')
         self.days_and_shift = {
             'сегодня': timedelta(days=0),
             'завтра': timedelta(days=1),
@@ -18,9 +17,9 @@ class Time():
 
     # Функция для превращения строки с датой и временем
     # в объект datetime.
-    def parse_raw_date(self):
+    def parse_raw_date(self, input_string):
         try:
-            result = datetime.strptime(self.input_string, "%Y/%m/%d %H:%M")
+            result = datetime.strptime(input_string, "%Y/%m/%d %H:%M")
         except ValueError:
             return None
         return result
@@ -46,47 +45,57 @@ class Time():
 
     # Функция, осуществляющая парсинг строк
     # со словесным обозначением даты.
-    def parse_string(self):
-        if ':' in self.input_string:
-            input_list = self.input_string.split(' в ')
+    def parse_string(self, input_string):
+        if ':' in input_string:
+            input_list = input_string.split(' в ')
             word = input_list[0]
             time = input_list[1]
             result = self.input_word_and_time(word, time)
         else:
-            word = self.input_string
+            word = input_string
             result = self.input_word(word)
         return result
 
     # Функция, осуществляющая парсинг строки
     # вне зависимости от формата.
-    def parse(self):
-        if self.reg_date.match(self.input_string):
-            result = self.parse_raw_date()
-        elif self.reg_word.match(self.input_string) \
-                or self.input_string in self.days_and_shift:
-            result = self.parse_string()
-        else:
-            result = None
-        return result
+    def parse(self, input_string):
+        if not input_string:
+            return None
+
+        match_reg_date = self.reg_date.match(input_string)
+        if match_reg_date:
+            return self.parse_raw_date(match_reg_date.group(1)), match_reg_date.group(2)
+
+        match_reg_word = self.reg_word.match(input_string)
+        if match_reg_word:
+            return self.parse_string(match_reg_word.group(1)), match_reg_word.group(2)
+
+        first_word = input_string.split()[0]
+        if first_word in self.days_and_shift:
+            if first_word == input_string:
+                return self.parse_string(first_word), ''
+            else:
+                return self.parse_string(first_word), input_string[len(first_word):]
+        return None
 
 
 def test_parse_raw_date(name, input_string, result):
-    a = Time(input_string)
-    got = a.parse_raw_date()
+    a = Time()
+    got = a.parse_raw_date(input_string)
     to_show = "passed" if got == result else "failed"
     print("Test parse_raw_date {} {}, got {}, expected {}.".format(name, to_show, got, result))
 
 
 def test_parse_string(name, input_string, result):
-    a = Time(input_string)
-    got = a.parse_string()
+    a = Time()
+    got = a.parse_string(input_string)
     to_show = "passed" if got == result else "failed"
     print("Test parse_string {} {}, got {}, expected {}.".format(name, to_show, got, result))
 
 
 def test_parse(name, input_string, result):
-    a = Time(input_string)
-    got = a.parse()
+    a = Time()
+    got = a.parse(input_string)
     to_show = "passed" if got == result else "failed"
     print("Test parse {} {}, got {}, expected {}.".format(name, to_show, got, result))
 
@@ -120,9 +129,11 @@ def run_tests_parse_string():
 def run_tests_parse():
     test_parse("1", '', None)
     test_parse("2", 'zxdgfchgvjhbkjn', None)
-    test_parse("3", '2018/11/15 22:50', datetime(2018, 11, 15, 22, 50))
-    test_parse("4", 'завтра в 15:00', datetime.combine(date.today() + timedelta(days=1), time(15, 00)))
-    test_parse("5", 'сегодня', datetime.today().date())
+    test_parse("3", '2018/11/15 22:50', (datetime(2018, 11, 15, 22, 50), ''))
+    test_parse("4", 'завтра в 15:00', (datetime.combine(date.today() + timedelta(days=1), time(15, 00)), ''))
+    test_parse("5", 'сегодня', (datetime.today().date(), ''))
+    test_parse("6", 'сегодня в 15:00 сходить к врачу',
+               (datetime.combine(date.today(), time(15, 00)), ' сходить к врачу'))
 
 
 def run_tests():
