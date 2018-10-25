@@ -20,6 +20,17 @@ class Task():
         return self.task
 
 
+class TaskManager():
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self, task):
+        self.tasks.append(task)
+
+    def get_all_tasks(self):
+        return self.tasks
+
+
 def create_task(input_string):
     parsed_input_string = Time.Time().parse(input_string)
     if not parsed_input_string:
@@ -50,6 +61,14 @@ def test_create_task(name, input_string, result):
     print("Test create_task {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
 
 
+def test_add_task(name, input_task, result):
+    a = TaskManager()
+    a.add_task(input_task)
+    got = a.tasks
+    to_show = "passed" if got == result else "failed"
+    print("Test add_task {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
 def run_tests_get_date():
     test_get_date("1", datetime(2018, 11, 15, 22, 50), datetime(2018, 11, 15, 22, 50))
     test_get_date("2", datetime.today().date(), datetime.today().date())
@@ -70,10 +89,16 @@ def run_tests_create_task():
                      Task(datetime.combine(date.today(), time(15, 00)), ' сходить к врачу'))
 
 
+def run_tests_add_task():
+    test_sample = Task(datetime(2018, 11, 15, 22, 50), ' сходить к врачу')
+    test_add_task("1", test_sample, [test_sample])
+
+
 def run_tests():
     run_tests_get_date()
     run_tests_get_task()
     run_tests_create_task()
+    run_tests_add_task()
 
 
 if __name__ == '__main__':
