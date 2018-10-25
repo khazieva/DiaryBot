@@ -7,6 +7,12 @@ class Task():
         self.date = date
         self.task = task
 
+    def __eq__(self, other):
+        return self.date == other.date and self.task == other.task
+
+    def __str__(self):
+        return 'Когда: {}. Задача: {}.'.format(self.date, self.task)
+
     def get_date(self):
         return self.date
 
@@ -28,22 +34,20 @@ def test_get_date(name, input_datetime, result):
     a = Task(input_datetime, '')
     got = a.get_date()
     to_show = "passed" if got == result else "failed"
-    print("Test get_date {} {}, got {}, expected {}.".format(name, to_show, got, result))
+    print("Test get_date {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
 
 
 def test_get_task(name, input_string, result):
     a = Task(datetime.today(), input_string)
     got = a.get_task()
     to_show = "passed" if got == result else "failed"
-    print("Test get_task {} {}, got {}, expected {}.".format(name, to_show, got, result))
+    print("Test get_task {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
 
 
 def test_create_task(name, input_string, result):
     got = create_task(input_string)
-    test_passed = (got is None and result is None) or \
-        (got.get_date() == result.get_date() and got.get_task() == result.get_task())
-    to_show = "passed" if test_passed else "failed"
-    print("Test create_task {} {}, got {}, expected {}.".format(name, to_show, got, result))
+    to_show = "passed" if got == result else "failed"
+    print("Test create_task {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
 
 
 def run_tests_get_date():
