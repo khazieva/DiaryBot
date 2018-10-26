@@ -1,5 +1,5 @@
 import conversation
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 
 def test_get_date(name, input_datetime, result):
@@ -14,6 +14,27 @@ def test_get_task(name, input_string, result):
     got = a.get_task()
     to_show = "passed" if got == result else "failed"
     print("Test get_task {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
+def test_is_today(name, input_datetime, result):
+    a = conversation.Task(input_datetime, '')
+    got = a.is_today()
+    to_show = "passed" if got == result else "failed"
+    print("Test is_today {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
+def test_is_tomorrow(name, input_datetime, result):
+    a = conversation.Task(input_datetime, '')
+    got = a.is_tomorrow()
+    to_show = "passed" if got == result else "failed"
+    print("Test is_tomorrow {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
+def test_is_outdated(name, input_datetime, result):
+    a = conversation.Task(input_datetime, '')
+    got = a.is_outdated()
+    to_show = "passed" if got == result else "failed"
+    print("Test is_outdated {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
 
 
 def test_create_task(name, input_string, result):
@@ -48,6 +69,24 @@ def run_tests_get_task():
     test_get_task("2", 'тренировка', 'тренировка')
 
 
+def run_tests_is_today():
+    test_is_today("1", datetime(2018, 10, 15, 22, 50), False)
+    test_is_today("2", datetime.today().date(), True)
+    test_is_today("3", datetime.today().date() + timedelta(days=1), False)
+
+
+def run_tests_is_tomorrow():
+    test_is_tomorrow("1", datetime(2018, 10, 15, 22, 50), False)
+    test_is_tomorrow("2", datetime.today().date(), False)
+    test_is_tomorrow("3", datetime.today().date() + timedelta(days=1), True)
+
+
+def run_tests_is_outdated():
+    test_is_outdated("1", datetime(2018, 10, 15, 22, 50), True)
+    test_is_outdated("2", datetime.today().date(), False)
+    test_is_outdated("3", datetime.today().date() + timedelta(days=1), False)
+
+
 def run_tests_create_task():
     test_create_task("1", '2018/11/15 22:50', None)
     test_create_task("2", '', None)
@@ -71,6 +110,9 @@ def run_tests_get_all_tasks():
 def run_tests():
     run_tests_get_date()
     run_tests_get_task()
+    run_tests_is_today()
+    run_tests_is_tomorrow()
+    run_tests_is_outdated()
     run_tests_create_task()
     run_tests_add_task()
     run_tests_get_all_tasks()

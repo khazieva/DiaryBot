@@ -1,10 +1,11 @@
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 import Time
 
 
 class Task():
-    def __init__(self, date, task):
-        self.date = date
+    def __init__(self, task_date, task):
+        assert isinstance(task_date, datetime) or isinstance(task_date, date)
+        self.date = task_date
         self.task = task
 
     def __eq__(self, other):
@@ -13,11 +14,26 @@ class Task():
     def __str__(self):
         return 'Когда: {}. Задача: {}.'.format(self.date, self.task)
 
+    def __get_date_object(self):
+        if isinstance(self.date, datetime):
+            return self.date.date()
+        else:
+            return self.date
+
     def get_date(self):
         return self.date
 
     def get_task(self):
         return self.task
+
+    def is_today(self):
+        return self.__get_date_object() == datetime.today().date()
+
+    def is_tomorrow(self):
+        return self.__get_date_object() == datetime.today().date() + timedelta(days=1)
+
+    def is_outdated(self):
+        return self.__get_date_object() < datetime.today().date()
 
 
 class TaskManager():
