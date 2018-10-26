@@ -1,4 +1,6 @@
 import Time
+import test_time
+import test_converstion
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import sys
@@ -58,7 +60,8 @@ if __name__ == '__main__':
         exit()
 
     if sys.argv[1] == '--test':
-        Time.run_tests()
+        test_time.run_tests()
+        test_converstion.run_tests()
     elif sys.argv[1] == '--token':
         token = get_token(sys.argv[1:])
         main(token)
