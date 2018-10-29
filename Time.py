@@ -5,9 +5,9 @@ from datetime import datetime, timedelta, date, time
 class Time():
     def __init__(self):
         # Регулярное выражение для строк вида '2018/10/1 22:20'.
-        self.reg_date = re.compile(r'(\d{4}/\d{1,2}/\d{1,2} \d{2}:\d{2})(.*)')
+        self.reg_date = re.compile(r'(\d{4}/\d{1,2}/\d{1,2} \d{2}:\d{2}) (.*)')
         # Регулярное выражение для строк вида 'завтра в 15:00'.
-        self.reg_word = re.compile(r'([а-я ]* в \d{2}:\d{2})(.*)')
+        self.reg_word = re.compile(r'([а-я ]* в \d{2}:\d{2}) (.*)')
         self.days_and_shift = {
             'сегодня': timedelta(days=0),
             'завтра': timedelta(days=1),
@@ -75,5 +75,5 @@ class Time():
             if first_word == input_string:
                 return self.parse_string(first_word), ''
             else:
-                return self.parse_string(first_word), input_string[len(first_word):]
+                return self.parse_string(first_word), input_string[len(first_word) + 1:]
         return None

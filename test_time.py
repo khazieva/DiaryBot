@@ -52,11 +52,11 @@ def run_tests_parse_string():
 def run_tests_parse():
     test_parse("1", '', None)
     test_parse("2", 'zxdgfchgvjhbkjn', None)
-    test_parse("3", '2018/11/15 22:50', (datetime(2018, 11, 15, 22, 50), ''))
-    test_parse("4", 'завтра в 15:00', (datetime.combine(date.today() + timedelta(days=1), time(15, 00)), ''))
-    test_parse("5", 'сегодня', (datetime.today().date(), ''))
+    test_parse("3", '2018/11/15 22:50 ', (datetime(2018, 11, 15, 22, 50), ''))
+    test_parse("4", 'завтра в 15:00 ', (datetime.combine(date.today() + timedelta(days=1), time(15, 00)), ''))
+    test_parse("5", 'сегодня ', (datetime.today().date(), ''))
     test_parse("6", 'сегодня в 15:00 сходить к врачу',
-               (datetime.combine(date.today(), time(15, 00)), ' сходить к врачу'))
+               (datetime.combine(date.today(), time(15, 00)), 'сходить к врачу'))
 
 
 def run_tests():

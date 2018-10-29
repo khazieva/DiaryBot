@@ -129,9 +129,9 @@ def run_tests_create_task():
     test_create_task("2", '', None)
     test_create_task("3", 'сходить к врачу', None)
     test_create_task("4", '2018/11/15 22:50 сходить к врачу',
-                     conversation.Task(datetime(2018, 11, 15, 22, 50), ' сходить к врачу'))
+                     conversation.Task(datetime(2018, 11, 15, 22, 50), 'сходить к врачу'))
     test_create_task("5", 'сегодня в 15:00 сходить к врачу',
-                     conversation.Task(datetime.combine(date.today(), time(15, 00)), ' сходить к врачу'))
+                     conversation.Task(datetime.combine(date.today(), time(15, 00)), 'сходить к врачу'))
 
 
 def run_tests_add_task():
