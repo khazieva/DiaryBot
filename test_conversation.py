@@ -2,6 +2,18 @@ import conversation
 from datetime import datetime, date, time, timedelta
 
 
+def get_task_today(task_str='сходить к врачу'):
+    return conversation.Task(datetime.today().date(), task_str)
+
+
+def get_task_tomorrow(task_str='сходить к врачу'):
+    return conversation.Task(datetime.today().date() + timedelta(days=1), task_str)
+
+
+def get_task_outdated(task_str='сходить к врачу'):
+    return conversation.Task(datetime.today().date() - timedelta(days=1), task_str)
+
+
 def test_get_date(name, input_datetime, result):
     a = conversation.Task(input_datetime, '')
     got = a.get_date()
@@ -59,6 +71,31 @@ def test_get_all_tasks(name, input_tasks):
     print("Test get_all_tasks {} {}, got '{}', expected '{}'.".format(name, to_show, got, input_tasks))
 
 
+def test_get_tasks_for_today(name, input_tasks, result):
+    a = conversation.TaskManager()
+    a.tasks = input_tasks
+    got = a.get_tasks_for_today()
+    to_show = "passed" if got == result else "failed"
+    print("Test get_tasks_for_today {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
+def test_get_tasks_for_tomorrow(name, input_tasks, result):
+    a = conversation.TaskManager()
+    a.tasks = input_tasks
+    got = a.get_tasks_for_tomorrow()
+    to_show = "passed" if got == result else "failed"
+    print("Test get_tasks_for_tomorrow {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
+def test_remove_outdated_tasks(name, input_tasks, result):
+    a = conversation.TaskManager()
+    a.tasks = input_tasks
+    a.remove_outdated_tasks()
+    got = a.get_all_tasks()
+    to_show = "passed" if got == result else "failed"
+    print("Test remove_outdated_tasks {} {}, got '{}', expected '{}'.".format(name, to_show, got, result))
+
+
 def run_tests_get_date():
     test_get_date("1", datetime(2018, 11, 15, 22, 50), datetime(2018, 11, 15, 22, 50))
     test_get_date("2", datetime.today().date(), datetime.today().date())
@@ -107,6 +144,28 @@ def run_tests_get_all_tasks():
     test_get_all_tasks("1", [test_sample])
 
 
+def run_tests_get_tasks_for_today():
+    test_sample_one = [get_task_today('сходить в магазин'), get_task_today('погулять'), get_task_tomorrow()]
+    test_sample_two = [get_task_tomorrow(), get_task_tomorrow(), get_task_tomorrow()]
+    test_get_tasks_for_today("1",  test_sample_one, [get_task_today('сходить в магазин'), get_task_today('погулять')])
+    test_get_tasks_for_today("2", test_sample_two, [])
+
+
+def run_tests_get_tasks_for_tommorow():
+    test_sample_one = [get_task_today(), get_task_tomorrow('погулять'), get_task_tomorrow('тренировка')]
+    test_sample_two = [get_task_today(), get_task_today(), get_task_today()]
+    test_get_tasks_for_tomorrow("1", test_sample_one, [get_task_tomorrow('погулять'), get_task_tomorrow('тренировка')])
+    test_get_tasks_for_tomorrow("2", test_sample_two, [])
+
+
+def run_tests_remove_outdated_tasks():
+    test_sample_one = [get_task_outdated(), get_task_today('читать'), get_task_outdated(),
+                       get_task_tomorrow('тренировка')]
+    test_sample_two = [get_task_tomorrow('бег'), get_task_today('приготовить обед')]
+    test_remove_outdated_tasks("1", test_sample_one, [get_task_today('читать'), get_task_tomorrow('тренировка')])
+    test_remove_outdated_tasks("2", test_sample_two, [get_task_tomorrow('бег'), get_task_today('приготовить обед')])
+
+
 def run_tests():
     run_tests_get_date()
     run_tests_get_task()
@@ -116,6 +175,9 @@ def run_tests():
     run_tests_create_task()
     run_tests_add_task()
     run_tests_get_all_tasks()
+    run_tests_get_tasks_for_today()
+    run_tests_get_tasks_for_tommorow()
+    run_tests_remove_outdated_tasks()
 
 
 if __name__ == '__main__':

@@ -41,10 +41,32 @@ class TaskManager():
         self.tasks = []
 
     def add_task(self, task):
+        assert isinstance(task, Task)
         self.tasks.append(task)
 
     def get_all_tasks(self):
         return self.tasks
+
+    def get_tasks_for_today(self):
+        task_today = []
+        for task in self.tasks:
+            if task.is_today():
+                task_today.append(task)
+        return task_today
+
+    def get_tasks_for_tomorrow(self):
+        task_tomorrow = []
+        for task in self.tasks:
+            if task.is_tomorrow():
+                task_tomorrow.append(task)
+        return task_tomorrow
+
+    def remove_outdated_tasks(self):
+        actual_tasks = []
+        for task in self.tasks:
+            if not task.is_outdated():
+                actual_tasks.append(task)
+        self.tasks = actual_tasks
 
 
 def create_task(input_string):
