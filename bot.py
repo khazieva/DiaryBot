@@ -67,6 +67,12 @@ def send_tomorrow_tasks(updater, chat_id):
                              "На завтра ничего не запланировано.")
 
 
+# Функция для удаления просроченных задач.
+def filter_tasks():
+    for task_manager in task_managers:
+        task_manager.remove_outdated_tasks()
+
+
 # Функция для удобного отображения ошибок.
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
