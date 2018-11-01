@@ -4,6 +4,7 @@ import test_conversation
 import conversation
 from datetime import datetime, date
 import time
+import threading
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import sys
@@ -25,19 +26,25 @@ class ReminderHandler():
         self.tomorrow_reminder_sent = False
 
     # Метод для отправки напоминаний.
-    def update(updater):
+    def update(self, updater):
         hour = datetime.now().hour
+
+        # Проверяем, сменился ли день.
         if date.today() > self.actual_date:
             self.actual_date = date.today()
             self.today_reminder_sent = False
             self.tomorrow_reminder_sent = False
             filter_tasks()
-        if self.today_reminder_sent = False and hour >= 9:
+
+        # Проверяем, нужно ли отправить напоминание о сегодняшних задачах.
+        if self.today_reminder_sent is False and hour >= 9:
             self.today_reminder_sent = True
             for chat_id in task_managers.keys():
                 send_today_tasks(updater, chat_id)
-        if self.tomorrow_reminder_sent = False and hour >= 20:
-            self/tomorrow_reminder_sent = True
+
+        # Проверяем, нужно ли отправить напоминание о завтрашних задачах.
+        if self.tomorrow_reminder_sent is False and hour >= 20:
+            self.tomorrow_reminder_sent = True
             for chat_id in task_managers.keys():
                 send_tomorrow_tasks(updater, chat_id)
 
@@ -107,6 +114,13 @@ def run_updater(updater):
         time.sleep(60)
 
 
+# Функция для запуска потока обновления данных.
+def start_updater(updater):
+    t = threading.Thread(target=run_updater, args=(updater,))
+    t.daemon = True
+    t.start()
+
+
 # Функция для удобного отображения ошибок.
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
@@ -138,6 +152,8 @@ def main(token):
     dp.add_handler(CommandHandler("сегодня", tasks_for_today))
     dp.add_handler(CommandHandler("завтра", tasks_for_tomorrow))
     dp.add_error_handler(error)
+
+    start_updater(updater)
 
     updater.start_polling()
     updater.idle()
