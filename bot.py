@@ -2,6 +2,7 @@ import Time
 import test_time
 import test_conversation
 import conversation
+from datetime import datetime, date
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import sys
@@ -14,6 +15,30 @@ logger = logging.getLogger(__name__)
 
 
 task_managers = dict()
+
+
+class ReminderHandler():
+    def __init__(self):
+        self.actual_date = date.today()
+        self.today_reminder_sent = False
+        self.tomorrow_reminder_sent = False
+
+    # Метод для отправки напоминаний.
+    def update(updater):
+        hour = datetime.now().hour
+        if date.today() > self.actual_date:
+            self.actual_date = date.today()
+            self.today_reminder_sent = False
+            self.tomorrow_reminder_sent = False
+            filter_tasks()
+        if self.today_reminder_sent = False and hour >= 9:
+            self.today_reminder_sent = True
+            for chat_id in task_managers.keys():
+                send_today_tasks(updater, chat_id)
+        if self.tomorrow_reminder_sent = False and hour >= 20:
+            self/tomorrow_reminder_sent = True
+            for chat_id in task_managers.keys():
+                send_tomorrow_tasks(updater, chat_id)
 
 
 def start(bot, update):
@@ -69,7 +94,7 @@ def send_tomorrow_tasks(updater, chat_id):
 
 # Функция для удаления просроченных задач.
 def filter_tasks():
-    for task_manager in task_managers:
+    for task_manager in task_managers.values():
         task_manager.remove_outdated_tasks()
 
 
