@@ -3,6 +3,7 @@ import test_time
 import test_conversation
 import conversation
 from datetime import datetime, date
+import time
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import sys
@@ -96,6 +97,14 @@ def send_tomorrow_tasks(updater, chat_id):
 def filter_tasks():
     for task_manager in task_managers.values():
         task_manager.remove_outdated_tasks()
+
+
+# Функция для обновления.
+def run_updater(updater):
+    reminder_handler = ReminderHandler()
+    while True:
+        reminder_handler.update(updater)
+        time.sleep(60)
 
 
 # Функция для удобного отображения ошибок.
