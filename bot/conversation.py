@@ -48,25 +48,13 @@ class TaskManager():
         return self.tasks
 
     def get_tasks_for_today(self):
-        task_today = []
-        for task in self.tasks:
-            if task.is_today():
-                task_today.append(task)
-        return task_today
+        return list(filter(lambda x: x.is_today(), self.tasks))
 
     def get_tasks_for_tomorrow(self):
-        task_tomorrow = []
-        for task in self.tasks:
-            if task.is_tomorrow():
-                task_tomorrow.append(task)
-        return task_tomorrow
+        return list(filter(lambda x: x.is_tomorrow(), self.tasks))
 
     def remove_outdated_tasks(self):
-        actual_tasks = []
-        for task in self.tasks:
-            if not task.is_outdated():
-                actual_tasks.append(task)
-        self.tasks = actual_tasks
+        self.tasks = list(filter(lambda x: not x.is_outdated(), self.tasks))
 
 
 def create_task(input_string):
